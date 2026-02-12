@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Cart - ArtNest</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            margin: 0;
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .item img {
+            width: 120px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 6px 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>🛒 My Cart</h2>
+    <a href="/buyer-dashboard" style="color:white;">← Back</a>
+</header>
+
+<div class="container">
+    <div id="cartItems"></div>
+    <div class="total" id="totalAmount"></div>
+    <button onclick="checkout()">Proceed to Payment</button>
+</div>
+
+<script>
+async function loadCart() {
+    const response = await fetch("/cart");
+    const data = await response.json();
+
+    const container = document.getElementById("cartItems");
+    const totalDiv = document.getElementById("totalAmount");
+
+    container.innerHTML = "";
+    let total = 0;
+
+    data.forEach(item => {
+        total += parseFloat(item.price);
+
+        container.innerHTML += `
+            <div class="item">
+                <img src="/static/uploads/${item.image}">
+                <div>
+                    <h4>${item.title}</h4>
+                    <p>₹ ${item.price}</p>
+                </div>
+            </div>
+        `;
+    });
+
+    totalDiv.innerHTML = "Total: ₹ " + total;
+}
+
+async function checkout() {
+    const response = await fetch("/checkout", {
+        method: "POST",
+        credentials: "include"
+    });
+
+    const data = await response.json();
+
+    if (data.total) {
+        alert("Payment Successful! Total Paid: ₹ " + data.total);
+        window.location.reload();
+    } else {
+        alert(data.message);
+    }
+}
+
+
+
+
+loadCart();
+</script>
+
+</body>
+</html>

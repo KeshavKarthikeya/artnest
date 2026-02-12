@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ArtNest Register</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+        }
+
+        .back {
+            margin-top: 15px;
+            display: block;
+            color: #555;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Create ArtNest Account</h2>
+
+    <form id="registerForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <select id="role">
+            <option value="buyer">Buyer</option>
+            <option value="artist">Artist</option>
+        </select>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="message"></p>
+
+    <a href="/" class="back">← Back to Home</a>
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const response = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            role: document.getElementById("role").value
+        })
+    });
+
+    const data = await response.json();
+
+    if (data.message === "User registered successfully") {
+        document.getElementById("message").style.color = "green";
+        document.getElementById("message").innerText = "Registration successful! Redirecting...";
+        setTimeout(() => {
+            window.location.href = "/login-page";
+        }, 1500);
+    } else {
+        document.getElementById("message").innerText = data.message;
+    }
+});
+</script>
+
+</body>
+</html>

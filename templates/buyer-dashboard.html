@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buyer Marketplace - ArtNest</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        header {
+            background: #2d3748;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h2 {
+            margin: 0;
+        }
+
+        .header-buttons button {
+            margin-left: 10px;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>🛒 ArtNest Marketplace</h2>
+    <div class="header-buttons">
+        <a href="/cart-page"><button>View Cart</button></a>
+
+        <button onclick="checkout()">Checkout</button>
+        <a href="/" style="color:white; text-decoration:none;">Logout</a>
+    </div>
+</header>
+
+<div class="container">
+    <h3>Available Artworks</h3>
+    <div class="grid" id="artGrid"></div>
+</div>
+
+<script>
+async function loadArtworks() {
+    const response = await fetch("/artworks");
+    const data = await response.json();
+
+    const grid = document.getElementById("artGrid");
+    grid.innerHTML = "";
+
+    data.forEach(art => {
+        grid.innerHTML += `
+            <div class="card">
+                <img src="/static/uploads/${art.image}" />
+                <div class="card-body">
+                    <h4>${art.title}</h4>
+                    <p>${art.description}</p>
+                    <div class="price">₹ ${art.price}</div>
+                    <button onclick="addToCart(${art.id})">Add to Cart</button>
+                    <button onclick="buyNow(${art.id})">Buy Now</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+async function addToCart(id) {
+    const response = await fetch(`/add-to-cart/${id}`, {
+        method: "POST"
+    });
+
+    const data = await response.json();
+    alert(data.message);
+}
+
+async function buyNow(id) {
+    const response = await fetch(`/buy-artwork/${id}`, {
+        method: "POST"
+    });
+
+    const data = await response.json();
+    alert(data.message);
+}
+
+async function viewCart() {
+    const response = await fetch("/cart");
+    const data = await response.json();
+    alert(JSON.stringify(data, null, 2));
+}
+
+async function checkout() {
+    const response = await fetch("/checkout", {
+        method: "POST"
+    });
+
+    const data = await response.json();
+    alert("Payment Done. Total: ₹" + data.total);
+}
+
+loadArtworks();
+</script>
+
+</body>
+</html>
