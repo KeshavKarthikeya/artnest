@@ -8,8 +8,10 @@ db = mysql.connector.connect(
     host=Config.MYSQL_HOST,
     user=Config.MYSQL_USER,
     password=Config.MYSQL_PASSWORD,
-    database=Config.MYSQL_DATABASE
+    database=Config.MYSQL_DATABASE,
+    port=Config.MYSQL_PORT
 )
+
 
 @order_bp.route("/buy-artwork/<int:art_id>", methods=["POST"])
 def buy_artwork(art_id):

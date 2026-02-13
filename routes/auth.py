@@ -9,8 +9,10 @@ db = mysql.connector.connect(
     host=Config.MYSQL_HOST,
     user=Config.MYSQL_USER,
     password=Config.MYSQL_PASSWORD,
-    database=Config.MYSQL_DATABASE
+    database=Config.MYSQL_DATABASE,
+    port=Config.MYSQL_PORT
 )
+
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
